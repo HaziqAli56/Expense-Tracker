@@ -1,4 +1,21 @@
+# Python cache
+__pycache__/
+*.pyc
 
+# Environment files
 .env
 venv/
-__pycache__/
+env/
+.venv/
+
+# Flask instance
+instance/
+
+# VS Code
+.vscode/
+
+# Database
+*.sqlite3
+
+# Temporary files
+tempCodeRunnerFile.py

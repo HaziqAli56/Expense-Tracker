@@ -1,0 +1,242 @@
+
+{# form.html — add/edit transaction #}
+
+{% extends "base.html" %}
+
+{% block title %}
+    {{ form_title }} — Expense Tracker
+{% endblock %}
+
+{% block content %}
+
+{% set fd = form_draft if form_draft is not none else none %}
+
+{% set etype =
+    (fd.entry_type if fd and fd.entry_type
+    else (transaction.entry_type if transaction else 'income'))
+%}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <h2 class="mb-4">{{ form_title }}</h2>
+
+            <form method="POST" action="{{ action }}">
+
+                <!-- Amount -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Amount
+                    </label>
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="amount"
+                        class="form-control"
+                        required
+                        value="{{
+                            fd.amount
+                            if fd
+                            else (transaction.amount if transaction else '')
+                        }}"
+                    >
+
+                </div>
+
+                <!-- Date -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="entry_date"
+                        class="form-control"
+                        value="{{
+                            fd.entry_date
+                            if fd
+                            else (
+                                transaction.entry_date.strftime('%Y-%m-%d')
+                                if transaction else ''
+                            )
+                        }}"
+                    >
+
+                </div>
+
+                <!-- Type -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Type
+                    </label>
+
+                    <select
+                        name="entry_type"
+                        id="entry_type"
+                        class="form-select"
+                        required
+                        onchange="updateCategories()"
+                    >
+
+                        <option
+                            value="expense"
+                            {% if etype == "expense" %}
+                                selected
+                            {% endif %}
+                        >
+                            Expense
+                        </option>
+
+                        <option
+                            value="income"
+                            {% if etype == "income" %}
+                                selected
+                            {% endif %}
+                        >
+                            Income
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <!-- Category -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Category
+                    </label>
+
+                    <select
+                        name="category"
+                        id="category"
+                        class="form-select"
+                        required
+                    >
+                    </select>
+
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    <textarea
+                        name="description"
+                        class="form-control"
+                        rows="3"
+                    >{{
+                        fd.description
+                        if fd
+                        else (
+                            transaction.description
+                            if transaction else ''
+                        )
+                    }}</textarea>
+
+                </div>
+
+                <!-- Buttons -->
+                 <button
+    type="submit"
+    class="btn btn-primary"
+    onclick="this.disabled=true; this.innerText='Saving...'; this.form.submit();"
+>
+
+    Save Transaction
+
+</button>
+
+
+                <a
+                    href="{{ url_for('transactions.list_transactions') }}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    const expenseCategories = {{ expense_categories|tojson }};
+    const incomeCategories = {{ income_categories|tojson }};
+
+    const selectedCategory = "{{ 
+        fd.category
+        if fd
+        else (transaction.category if transaction else '')
+    }}";
+
+    function updateCategories() {
+
+        const type =
+            document.getElementById("entry_type").value;
+
+        const categorySelect =
+            document.getElementById("category");
+
+        categorySelect.innerHTML = "";
+
+        let categories = [];
+
+        if (type === "income") {
+            categories = incomeCategories;
+        } else {
+            categories = expenseCategories;
+        }
+
+        categories.forEach(cat => {
+
+            const option =
+                document.createElement("option");
+
+            option.value = cat;
+            option.textContent = cat;
+
+            if (cat === selectedCategory) {
+                option.selected = true;
+            }
+
+            categorySelect.appendChild(option);
+
+        });
+
+    }
+
+    updateCategories();
+
+</script>
+
+
+<script>
+
+const btn = document.getElementById('submitBtn');
+
+btn.addEventListener('click', () => {
+
+    btn.innerHTML = 'Saving...';
+
+});
+
+</script>
+
+
+{% endblock %}

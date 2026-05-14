@@ -1,0 +1,137 @@
+{# register.html #}
+{% extends "base.html" %}
+{% block title %}Register — Expense Tracker{% endblock %}
+{% block content %}
+<div class="row justify-content-center py-lg-3">
+  <div class="col-md-5 col-lg-4">
+    <div class="card border-0 shadow-sm p-4 p-md-5">
+      <div class="text-center mb-4">
+        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success-subtle text-success p-3 mb-2">
+          <i class="bi bi-person-plus fs-3" aria-hidden="true"></i>
+        </span>
+        <h1 class="h4 mb-0">Create account</h1>
+        <p class="text-muted small mb-0">Username choose karein — password confirm zaroori</p>
+      </div>
+      <form method="post" action="{{ url_for('auth.register') }}">
+        <div class="mb-3">
+          <label class="form-label fw-medium" for="username">Username</label>
+          <input class="form-control form-control-lg" id="username" name="username" required autocomplete="username" value="{{ last_username }}">
+        </div>
+        <!-- Password -->
+<div class="mb-3">
+
+  <label class="form-label fw-medium" for="password">
+    Password
+  </label>
+
+  <div class="input-group">
+
+    <input
+      type="password"
+      class="form-control form-control-lg"
+      id="password"
+      name="password"
+      required
+      autocomplete="new-password"
+    >
+
+    <button
+      class="btn btn-outline-secondary"
+      type="button"
+      id="togglePassword"
+    >
+      <i class="bi bi-eye"></i>
+    </button>
+
+  </div>
+
+</div>
+
+<!-- Confirm Password -->
+<div class="mb-3">
+
+  <label class="form-label fw-medium" for="confirm_password">
+    Confirm password
+  </label>
+
+  <div class="input-group">
+
+    <input
+      type="password"
+      class="form-control form-control-lg"
+      id="confirm_password"
+      name="confirm_password"
+      required
+      autocomplete="new-password"
+    >
+
+    <button
+      class="btn btn-outline-secondary"
+      type="button"
+      id="toggleConfirmPassword"
+    >
+      <i class="bi bi-eye"></i>
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+
+  // Password field
+  const togglePassword =
+    document.getElementById("togglePassword");
+
+  const password =
+    document.getElementById("password");
+
+  const passwordIcon =
+    togglePassword.querySelector("i");
+
+  togglePassword.addEventListener("click", function () {
+
+    const type =
+      password.type === "password"
+      ? "text"
+      : "password";
+
+    password.type = type;
+
+    passwordIcon.classList.toggle("bi-eye");
+    passwordIcon.classList.toggle("bi-eye-slash");
+
+  });
+
+  // Confirm Password field
+  const toggleConfirmPassword =
+    document.getElementById("toggleConfirmPassword");
+
+  const confirmPassword =
+    document.getElementById("confirm_password");
+
+  const confirmIcon =
+    toggleConfirmPassword.querySelector("i");
+
+  toggleConfirmPassword.addEventListener("click", function () {
+
+    const type =
+      confirmPassword.type === "password"
+      ? "text"
+      : "password";
+
+    confirmPassword.type = type;
+
+    confirmIcon.classList.toggle("bi-eye");
+    confirmIcon.classList.toggle("bi-eye-slash");
+
+  });
+
+</script>
+        <button type="submit" class="btn btn-success w-100 btn-lg">Sign up</button>
+      </form>
+      <p class="mt-4 mb-0 text-center small text-muted">Pehle se account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

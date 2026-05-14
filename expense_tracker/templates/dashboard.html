@@ -1,0 +1,473 @@
+
+{# dashboard.html #}
+
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard — Expense Tracker
+{% endblock %}
+
+{% block head_extra %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- HEADER -->
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4">
+
+        <div>
+
+            <h1 class="h3 mb-0">
+                Dashboard
+            </h1>
+
+            <p class="text-muted small mb-0">
+                Apni income, expenses aur balance ka quick summary
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- STATS -->
+    <div class="row g-3 mb-4">
+
+        <!-- INCOME -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 p-3 h-100">
+
+                <h6 class="text-muted">
+                    Total Income
+                </h6>
+
+                <h2 class="text-success">
+
+                    PKR {{ "%.2f"|format(total_income) }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+        <!-- EXPENSE -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 p-3 h-100">
+
+                <h6 class="text-muted">
+                    Total Expenses
+                </h6>
+
+                <h2 class="text-danger">
+
+                    PKR {{ "%.2f"|format(total_expense) }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+        <!-- BALANCE -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 p-3 h-100">
+
+                <h6 class="text-muted">
+                    Current Balance
+                </h6>
+
+                <h2 class="text-primary">
+
+                    PKR {{ "%.2f"|format(balance) }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- CHART ROW 1 -->
+    <div class="row g-4">
+
+        <!-- PIE -->
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0 p-4 h-100">
+
+                <h5 class="mb-3">
+                    Expenses By Category
+                </h5>
+
+                <canvas id="expenseChart"></canvas>
+
+            </div>
+
+        </div>
+
+        <!-- INCOME VS EXPENSE -->
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0 p-4 h-100">
+
+                <h5 class="mb-3">
+                    Income vs Expense
+                </h5>
+
+                <canvas id="incomeChart"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- CHART ROW 2 -->
+    <div class="row g-4 mt-1">
+
+        <!-- MONTHLY -->
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0 p-4 h-100">
+
+                <h5 class="mb-3">
+                    Monthly Expenses
+                </h5>
+
+                <canvas id="monthlyChart"></canvas>
+
+            </div>
+
+        </div>
+
+        <!-- TREND -->
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0 p-4 h-100">
+
+                <h5 class="mb-3">
+                    Spending Trend
+                </h5>
+
+                <canvas id="trendChart"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- BUDGET -->
+    <div class="card shadow-sm border-0 p-4 mt-4">
+
+        <h5 class="mb-3">
+            Monthly Budget
+        </h5>
+
+        <form
+            method="POST"
+            action="{{ url_for('dashboard.set_budget') }}"
+        >
+
+            <div class="row">
+
+                <div class="col-md-5 mb-3">
+
+                    <label class="form-label">
+                        Month
+                    </label>
+
+                    <input
+                        type="text"
+                        name="month"
+                        class="form-control"
+                        placeholder="May 2026"
+                        required
+                    >
+
+                </div>
+
+                <div class="col-md-5 mb-3">
+
+                    <label class="form-label">
+                        Budget Amount
+                    </label>
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="amount"
+                        class="form-control"
+                        required
+                    >
+
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end mb-3">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100"
+                    >
+
+                        Save Budget
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- BUDGET CHART -->
+    {% if budget_chart %}
+
+    <div class="card shadow-sm border-0 p-4 mt-4">
+
+        <h5 class="mb-3">
+            Budget Progress
+        </h5>
+
+        <canvas id="budgetChart"></canvas>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+const expenseData = {{ expense_chart | tojson }};
+
+new Chart(
+
+    document.getElementById('expenseChart'),
+
+    {
+
+        type: 'pie',
+
+        data: {
+
+            labels: expenseData.labels,
+
+            datasets: [{
+
+                data: expenseData.values,
+
+                borderWidth: 1
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            animation: {
+
+                duration: 2000
+
+            }
+
+        }
+
+    }
+
+);
+
+
+// INCOME VS EXPENSE
+
+const incomeData = {{ income_chart | tojson }};
+
+new Chart(
+
+    document.getElementById('incomeChart'),
+
+    {
+
+        type: 'doughnut',
+
+        data: {
+
+            labels: incomeData.labels,
+
+            datasets: [{
+
+                data: incomeData.values
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            animation: {
+
+                duration: 2000
+
+            }
+
+        }
+
+    }
+
+);
+
+
+// MONTHLY EXPENSES
+
+const monthlyData = {{ monthly_chart | tojson }};
+
+new Chart(
+
+    document.getElementById('monthlyChart'),
+
+    {
+
+        type: 'bar',
+
+        data: {
+
+            labels: monthlyData.labels,
+
+            datasets: [{
+
+                label: 'Expenses',
+
+                data: monthlyData.values
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            animation: {
+
+                duration: 2000
+
+            }
+
+        }
+
+    }
+
+);
+
+
+// TREND
+
+const trendData = {{ trend_chart | tojson }};
+
+new Chart(
+
+    document.getElementById('trendChart'),
+
+    {
+
+        type: 'line',
+
+        data: {
+
+            labels: trendData.labels,
+
+            datasets: [{
+
+                label: 'Trend',
+
+                data: trendData.values,
+
+                tension: 0.3
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            animation: {
+
+                duration: 2000
+
+            }
+
+        }
+
+    }
+
+);
+
+
+// BUDGET
+
+{% if budget_chart %}
+
+const budgetData = {{ budget_chart | tojson }};
+
+new Chart(
+
+    document.getElementById('budgetChart'),
+
+    {
+
+        type: 'doughnut',
+
+        data: {
+
+            labels: budgetData.labels,
+
+            datasets: [{
+
+                data: budgetData.values
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            animation: {
+
+                duration: 2000
+
+            }
+
+        }
+
+    }
+
+);
+
+{% endif %}
+
+</script>
+
+{% endblock %}

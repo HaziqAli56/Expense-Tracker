@@ -1,4 +1,6 @@
 
+from datetime import datetime
+
 from expense_tracker.extensions import db
 
 
@@ -26,3 +28,12 @@ class Budget(db.Model):
         db.Float,
         nullable=False
     )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
+
+    def __repr__(self):
+
+        return f"<Budget {self.month}: {self.amount}>"

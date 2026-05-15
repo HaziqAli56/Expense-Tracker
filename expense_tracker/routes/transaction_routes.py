@@ -59,7 +59,7 @@ def list_transactions():
 
     q_date_from, q_date_to = date_from, date_to
     if date_from and date_to and date_from > date_to:
-        flash("From date ko To date se pehle / barabar hona chahiye.", "warning")
+        flash("From date must be earlier than or equal to the To date.", "warning")
         q_date_from = q_date_to = None
 
     if q_date_from:
@@ -92,7 +92,7 @@ def list_transactions():
 @transaction_bp.route("/add", methods=["GET", "POST"])
 @login_required
 def add():
-    """Nayi transaction insert — server-side validation (categories whitelist)."""
+    """New Transaction insert — server-side validation (categories whitelist)."""
     if request.method == "POST":
         amount_raw = request.form.get("amount")
         entry_type = (request.form.get("entry_type") or "").strip()
@@ -107,10 +107,10 @@ def add():
 
         valid_cats = INCOME_CATEGORIES if entry_type == "income" else EXPENSE_CATEGORIES
         if not math.isfinite(amount) or amount <= 0:
-            flash("Amount valid positive number hona chahiye.", "danger")
+            flash("Amount must be a valid positive number.", "danger")
             return render_template(
                 "transactions/form.html",
-                form_title="Nayi transaction",
+                form_title="New Transaction",
                 action=url_for("transactions.add"),
                 expense_categories=EXPENSE_CATEGORIES,
                 income_categories=INCOME_CATEGORIES,
@@ -118,10 +118,10 @@ def add():
                 form_draft=_tx_form_draft(),
             )
         if entry_type not in ("income", "expense"):
-            flash("Type income ya expense hona chahiye.", "danger")
+            flash("Type must be either income or expense.", "danger")
             return render_template(
                 "transactions/form.html",
-                form_title="Nayi transaction",
+                form_title="New Transaction",
                 action=url_for("transactions.add"),
                 expense_categories=EXPENSE_CATEGORIES,
                 income_categories=INCOME_CATEGORIES,
@@ -129,10 +129,10 @@ def add():
                 form_draft=_tx_form_draft(),
             )
         if category not in valid_cats:
-            flash("Category invalid hai.", "danger")
+            flash("Invalid category.", "danger")
             return render_template(
                 "transactions/form.html",
-                form_title="Nayi transaction",
+                form_title="New Transaction",
                 action=url_for("transactions.add"),
                 expense_categories=EXPENSE_CATEGORIES,
                 income_categories=INCOME_CATEGORIES,
@@ -151,12 +151,12 @@ def add():
         )
         db.session.add(t)
         db.session.commit()
-        flash("Transaction save ho gayi.", "success")
+        flash("Transaction saved successfully.", "success")
         return redirect(url_for("transactions.list_transactions"))
 
     return render_template(
         "transactions/form.html",
-        form_title="Nayi transaction",
+        form_title="New Transaction",
         action=url_for("transactions.add"),
         expense_categories=EXPENSE_CATEGORIES,
         income_categories=INCOME_CATEGORIES,
@@ -187,7 +187,7 @@ def edit(tx_id: int):
 
         valid_cats = INCOME_CATEGORIES if entry_type == "income" else EXPENSE_CATEGORIES
         if not math.isfinite(amount) or amount <= 0:
-            flash("Amount valid positive number hona chahiye.", "danger")
+            flash("Amount must be a valid positive number.", "danger")
             return render_template(
                 "transactions/form.html",
                 form_title="Transaction edit",
@@ -198,7 +198,7 @@ def edit(tx_id: int):
                 form_draft=_tx_form_draft(),
             )
         if entry_type not in ("income", "expense"):
-            flash("Type income ya expense hona chahiye.", "danger")
+            flash("Type must be either income or expense.", "danger")
             return render_template(
                 "transactions/form.html",
                 form_title="Transaction edit",
@@ -209,7 +209,7 @@ def edit(tx_id: int):
                 form_draft=_tx_form_draft(),
             )
         if category not in valid_cats:
-            flash("Category invalid hai.", "danger")
+            flash("Invalid category.", "danger")
             return render_template(
                 "transactions/form.html",
                 form_title="Transaction edit",
@@ -227,7 +227,7 @@ def edit(tx_id: int):
         t.description = description
         t.entry_date = entry_date
         db.session.commit()
-        flash("Transaction update ho gayi.", "success")
+        flash("Transaction updated successfully.", "success")
         return redirect(url_for("transactions.list_transactions"))
 
     return render_template(
@@ -250,5 +250,5 @@ def delete(tx_id: int):
         abort(404)
     db.session.delete(t)
     db.session.commit()
-    flash("Transaction delete ho gayi.", "info")
+    flash("Transaction deleted successfully.", "info")
     return redirect(url_for("transactions.list_transactions"))

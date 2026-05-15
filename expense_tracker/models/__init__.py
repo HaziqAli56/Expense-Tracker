@@ -9,4 +9,5 @@ from expense_tracker.models.transaction_model import Transaction
 from expense_tracker.models.user_model import User
 from .budget_model import Budget
 
-__all__ = ["User", "Transaction"]
+
+__all__ = ["User", "Transaction", "Budget"]

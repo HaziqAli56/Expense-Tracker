@@ -1,100 +1,126 @@
-{# login.html #}
+{# login.html - premium black/yellow authentication screen #}
 {% extends "base.html" %}
-{% block title %}Login — Expense Tracker{% endblock %}
+
+{% block title %}Login - Expense Tracker{% endblock %}
+
+{% block head_extra %}
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+    theme: {
+      extend: {
+        colors: {
+          authBg: "#1A1D24",
+          authPanel: "#1E222B",
+          authInk: "#F8FAFC",
+          authMuted: "#A7B0C0",
+          neonGold: "#EAB308",
+        },
+      },
+    },
+  };
+</script>
+<style>
+  .app-navbar, .footer-muted, .app-shell > .app-alert { display: none !important; }
+  .app-shell { max-width: none !important; padding: 0 !important; }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center py-lg-3">
-  <div class="col-md-5 col-lg-4">
-    <div class="card border-0 shadow-sm p-4 p-md-5">
-      <div class="text-center mb-4">
-        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary p-3 mb-2">
-          <i class="bi bi-box-arrow-in-right fs-3" aria-hidden="true"></i>
+<section class="min-h-screen bg-authBg text-authInk">
+  <div class="mx-auto grid min-h-screen max-w-7xl grid-cols-1 lg:grid-cols-2">
+    <aside class="flex flex-col justify-center px-6 py-8 sm:px-10 lg:px-14">
+      <a href="{{ url_for('auth.login') }}" class="mb-8 inline-flex items-center gap-3 text-authInk no-underline">
+        <span class="grid h-10 w-10 place-items-center rounded-2xl border border-yellow-400/30 bg-yellow-400/10 text-neonGold lg:h-11 lg:w-11">
+          <i class="bi bi-wallet2 text-xl lg:text-2xl"></i>
         </span>
-        <h1 class="h4 mb-0">Welcome back</h1>
-        <p class="text-muted small mb-0">Login to access your dashboard.</p>
+        <span class="text-lg font-bold lg:text-xl">Expense Tracker</span>
+      </a>
+
+      <div class="mx-auto w-full max-w-md text-center lg:mx-0 lg:text-left">
+        <div class="mx-auto mb-5 grid h-36 w-36 place-items-center rounded-full border border-yellow-400/20 bg-yellow-400/10 shadow-2xl shadow-black/40 sm:h-44 sm:w-44 lg:mx-0 lg:mb-8 lg:h-56 lg:w-56">
+          <svg viewBox="0 0 220 220" class="h-28 w-28 sm:h-36 sm:w-36 lg:h-44 lg:w-44" role="img" aria-label="Finance tracking illustration">
+            <circle cx="110" cy="110" r="88" fill="#111827" stroke="#EAB308" stroke-width="3" opacity="0.95"></circle>
+            <path d="M58 133c25 21 78 25 104-10 19-26 7-66-24-77-32-11-70 10-87 39-12 21-10 37 7 48z" fill="#273142"></path>
+            <path d="M72 144h77" stroke="#EAB308" stroke-width="9" stroke-linecap="round"></path>
+            <path d="M84 123l24-38 23 26 18-42" fill="none" stroke="#FACC15" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"></path>
+            <circle cx="84" cy="123" r="8" fill="#EAB308"></circle>
+            <circle cx="108" cy="85" r="8" fill="#EAB308"></circle>
+            <circle cx="131" cy="111" r="8" fill="#EAB308"></circle>
+            <circle cx="149" cy="69" r="8" fill="#EAB308"></circle>
+          </svg>
+        </div>
+        <p class="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-neonGold lg:text-sm lg:tracking-[0.32em]">Premium finance control</p>
+        <h1 class="mb-3 text-3xl font-black leading-tight text-white sm:text-4xl lg:text-5xl">Connect with your finances and track every penny.</h1>
+        <p class="text-sm leading-6 text-authMuted sm:text-base sm:leading-7">Login to manage transactions, forecast spending, scan receipts, and keep your monthly budget under control.</p>
       </div>
-      <form method="post" action="{{ url_for('auth.login') }}">
-        <div class="mb-3">
-          <label class="form-label fw-medium" for="username">Username</label>
-          <input class="form-control form-control-lg" id="username" name="username" required autocomplete="username" value="{{ last_username }}">
+    </aside>
+
+    <main class="flex items-start justify-center px-6 pb-8 sm:px-10 lg:items-center lg:px-14">
+      <div class="w-full max-w-md rounded-[2rem] border border-yellow-400/25 bg-authPanel p-6 shadow-2xl shadow-black/50 sm:p-8">
+        <div class="mb-7 text-center">
+          <span class="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-yellow-400 text-2xl text-black shadow-lg shadow-yellow-500/20">
+            <i class="bi bi-box-arrow-in-right"></i>
+          </span>
+          <h2 class="mb-1 text-3xl font-black text-white">Log In</h2>
+          <p class="text-sm text-authMuted">Access your dashboard and account reports.</p>
         </div>
-        <div class="mb-3">
-        
-          <label class="form-label fw-medium" for="password">
-            Password
-          </label>
-        
-          <div class="input-group">
-        
-            <input
-              type="password"
-              class="form-control form-control-lg"
-              id="password"
-              name="password"
-              required
-              autocomplete="current-password"
-            >
-        
-            <button
-              class="btn btn-outline-secondary"
-              type="button"
-              id="togglePassword"
-            >
-              <i class="bi bi-eye"></i>
-            </button>
-        
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="mb-5 space-y-3">
+              {% for category, message in messages %}
+              <div class="rounded-2xl border border-yellow-400/25 bg-black/30 px-4 py-3 text-sm text-yellow-100">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form method="post" action="{{ url_for('auth.login') }}" class="space-y-5" data-loading-form>
+          {{ form.hidden_tag() }}
+
+          <div>
+            <label for="email" class="mb-2 block text-sm font-semibold text-slate-200">Email Address</label>
+            {{ form.email(class="w-full rounded-2xl border border-white/15 bg-black/20 px-4 py-3 text-white placeholder:text-slate-500 outline-none transition focus:border-yellow-400 focus:ring-4 focus:ring-yellow-400/15", autocomplete="email", placeholder="you@example.com") }}
+            {% for error in form.email.errors %}<p class="mt-2 text-sm text-red-300">{{ error }}</p>{% endfor %}
           </div>
-        
-        </div>
-        
-        <script>
-        
-          const togglePassword =
-            document.getElementById("togglePassword");
-        
-          const password =
-            document.getElementById("password");
-        
-          const icon =
-            togglePassword.querySelector("i");
-        
-          togglePassword.addEventListener("click", function () {
-        
-            const type =
-              password.getAttribute("type") === "password"
-              ? "text"
-              : "password";
-        
-            password.setAttribute("type", type);
-        
-            if (type === "text") {
-        
-              icon.classList.remove("bi-eye");
-              icon.classList.add("bi-eye-slash");
-        
-            } else {
-        
-              icon.classList.remove("bi-eye-slash");
-              icon.classList.add("bi-eye");
-        
-            }
-        
-          });
-        
-        </script>
 
-<button
-    type="submit"
-    class="btn btn-primary w-100 btn-lg"
-    onclick="this.disabled=true; this.innerText='Loading...'; this.form.submit();"
->
+          <div>
+            <label for="password" class="mb-2 block text-sm font-semibold text-slate-200">Password</label>
+            <div class="flex rounded-2xl border border-white/15 bg-black/20 transition focus-within:border-yellow-400 focus-within:ring-4 focus-within:ring-yellow-400/15 overflow-hidden">
+              {{ form.password(class="min-w-0 flex-1 border-0 bg-transparent px-4 py-3 text-white placeholder:text-slate-500 outline-none", id="password", autocomplete="current-password", placeholder="Enter your password") }}
+              <button type="button" class="grid w-12 place-items-center border-l border-white/10 text-slate-300 transition hover:text-yellow-400 bg-black/20" data-auth-toggle="password" aria-label="Show or hide password">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+            {% for error in form.password.errors %}<p class="mt-2 text-sm text-red-300">{{ error }}</p>{% endfor %}
+          </div>
 
-    Login
+          <div class="flex justify-end">
+            <a href="{{ url_for('auth.forgot_password') }}" class="text-sm font-semibold text-yellow-400 no-underline hover:text-yellow-300">Forgot Password?</a>
+          </div>
 
-</button>
+          <button type="submit" class="w-full rounded-2xl bg-yellow-500 px-5 py-3 font-black text-black shadow-lg shadow-yellow-500/20 transition hover:-translate-y-0.5 hover:bg-yellow-400" data-loading-label="Logging in...">Log In</button>
+        </form>
 
-      </form>
-      <p class="mt-4 mb-0 text-center small text-muted">New Account? <a href="{{ url_for('auth.register') }}">Register</a></p>
-    </div>
+        <p class="mt-6 text-center text-sm text-authMuted">New here? <a href="{{ url_for('auth.register') }}" class="font-bold text-yellow-400 no-underline hover:text-yellow-300">Create account</a></p>
+      </div>
+    </main>
   </div>
-</div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.querySelectorAll("[data-auth-toggle]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      var input = document.getElementById(button.dataset.authToggle);
+      var icon = button.querySelector("i");
+      if (!input) return;
+      input.type = input.type === "password" ? "text" : "password";
+      icon.className = input.type === "password" ? "bi bi-eye" : "bi bi-eye-slash";
+    });
+  });
+</script>
 {% endblock %}

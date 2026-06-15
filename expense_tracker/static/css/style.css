@@ -1,143 +1,801 @@
 /**
- * style.css — Custom CSS3 (Bootstrap ke upar polish + accessibility)
+ * style.css
+ * --------------------------------------------------------------------------
+ * Premium dark UI layer for the Flask Expense Tracker.
+ * Keeps Bootstrap available while overriding the visual system with a
+ * black-grey background, neon yellow brand accents, dark cards, and mobile app
+ * navigation.
+ * --------------------------------------------------------------------------
  */
 
-:root {
-  --brand: #0d6efd;
-  --nav-gradient-start: #0d6efd;
-  --nav-gradient-end: #0a58ca;
+/* Establishes predictable sizing across the full interface. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
+/* Enables smooth in-page movement for keyboard and anchor navigation. */
 html {
   scroll-behavior: smooth;
 }
 
+/* Sets the global dark background, readable text color, and app typography. */
 body {
   min-height: 100vh;
-  background: linear-gradient(165deg, #f1f5f9 0%, #e9ecef 45%, #f8f9fa 100%);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-base);
 }
 
-/* Navbar gradient — Bootstrap primary tones */
-.bg-gradient-nav {
-  background: linear-gradient(135deg, var(--nav-gradient-start), var(--nav-gradient-end)) !important;
+/* Keeps links yellow and consistent with the brand accent. */
+a {
+  color: var(--color-orange-primary);
+  text-decoration-color: rgba(234, 179, 8, 0.35);
+  transition: color var(--transition-fast), text-decoration-color var(--transition-fast);
 }
 
-.navbar .nav-link.active {
-  background: rgba(255, 255, 255, 0.15);
+/* Strengthens link affordance on hover without introducing a new color family. */
+a:hover {
+  color: var(--color-orange-light);
+  text-decoration-color: rgba(250, 204, 21, 0.65);
 }
 
-.navbar .nav-link:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.08);
+/* Provides desktop spacing and mobile bottom-nav clearance for every page. */
+.app-shell {
+  padding-top: var(--spacing-xl);
+  padding-bottom: calc(var(--spacing-3xl) + env(safe-area-inset-bottom));
 }
 
-/* Cards — soft elevation */
-.card {
-  border: none;
-  box-shadow: 0 0.25rem 1rem rgba(15, 23, 42, 0.06);
+/* Gives ordinary pages the same spacious glass-stage feeling as Add Transaction. */
+.app-shell > .container-fluid,
+.app-shell > .row,
+.app-shell > .card,
+.app-shell > form {
+  animation: pageFade 0.28s ease-out;
 }
 
-.stat-card {
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+/* Makes the desktop navbar the primary yellow brand surface. */
+.app-navbar {
+  background: var(--color-orange-primary);
+  min-height: 68px;
 }
 
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0.5rem 1.25rem rgba(15, 23, 42, 0.1) !important;
+/* Hides the desktop navbar on mobile because mobile uses bottom navigation. */
+.desktop-navbar {
+  display: none;
 }
 
+/* Keeps the simple login/register navbar visible on mobile for signed-out users. */
+.auth-navbar {
+  display: flex;
+}
+
+/* Makes brand text readable on the yellow navbar. */
 .navbar-brand {
-  font-weight: 600;
+  color: var(--color-text-inverse) !important;
+  letter-spacing: 0;
 }
 
+/* Defines the shared desktop navigation pill style. */
+.app-nav-link {
+  border-radius: var(--radius-full);
+  color: rgba(30, 30, 30, 0.78) !important;
+  font-weight: var(--font-weight-semibold);
+  padding: 0.55rem 0.9rem !important;
+  transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+
+/* Highlights active desktop routes with a dark pill against the yellow bar. */
+.app-nav-link.active {
+  background: rgba(18, 18, 18, 0.88);
+  color: var(--color-text-primary) !important;
+}
+
+/* Adds a subtle lift to desktop navigation hover states. */
+.app-nav-link:hover {
+  background: rgba(18, 18, 18, 0.16);
+  color: var(--color-text-inverse) !important;
+  transform: translateY(-1px);
+}
+
+/* Styles the authenticated username as a compact status chip. */
+.app-user-chip {
+  background: rgba(18, 18, 18, 0.18);
+  border: 1px solid rgba(18, 18, 18, 0.14);
+  border-radius: var(--radius-full);
+  color: var(--color-text-inverse) !important;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.8rem;
+}
+
+/* Converts Bootstrap cards into dark elevated content surfaces. */
+.card {
+  background: rgba(44, 44, 44, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 22px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+  color: var(--color-text-primary);
+}
+
+/* Adds premium motion feedback to summary cards and chart cards. */
+.card:hover {
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.38);
+}
+
+/* Ensures card bodies inherit the dark theme consistently. */
+.card-body {
+  color: var(--color-text-primary);
+}
+
+/* Keeps muted Bootstrap text readable on the dark background. */
+.text-muted {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Preserves green financial meaning for income values. */
+.text-success {
+  color: var(--color-success) !important;
+}
+
+/* Preserves red financial meaning for expenses and destructive values. */
+.text-danger {
+  color: var(--color-danger) !important;
+}
+
+/* Repoints Bootstrap primary text to the yellow brand accent. */
+.text-primary {
+  color: var(--color-orange-primary) !important;
+}
+
+/* Styles all form labels for clear dark-theme hierarchy. */
+.form-label {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Applies dark surfaces, off-white text, and subtle borders to text controls. */
+.form-control,
+.form-select {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+/* Keeps placeholder text visible without competing with user input. */
+.form-control::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Provides the required yellow focus ring for inputs and dropdowns. */
+.form-control:focus,
+.form-select:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--color-orange-primary);
+  box-shadow: 0 0 0 0.22rem rgba(234, 179, 8, 0.2);
+  color: var(--color-text-primary);
+}
+
+/* Displays password policy guidance in a compact, readable helper style. */
+.password-policy {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* Marks password policy guidance as satisfied without using button styling. */
+.password-policy.is-valid {
+  color: var(--color-success);
+}
+
+/* Marks password policy guidance as failing while the user edits the field. */
+.password-policy.is-invalid {
+  color: var(--color-danger);
+}
+
+/* Darkens Bootstrap input group labels such as currency prefixes. */
+.input-group-text {
+  background: rgba(234, 179, 8, 0.18);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffe2cc;
+}
+
+/* Makes primary CTAs use the requested neon yellow brand color. */
+.btn-primary,
+.btn-success {
+  background: var(--color-orange-primary);
+  border-color: var(--color-orange-primary);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-semibold);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+  border-radius: 16px;
+}
+
+/* Adds smooth hover feedback to all primary action buttons. */
+.btn-primary:hover,
+.btn-success:hover {
+  background: var(--color-orange-hover);
+  border-color: var(--color-orange-hover);
+  color: var(--color-text-inverse);
+  box-shadow: 0 10px 22px rgba(234, 179, 8, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Keeps secondary buttons visually quiet inside the dark interface. */
+.btn-secondary,
+.btn-dark {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: var(--color-text-primary);
+  border-radius: 16px;
+}
+
+/* Gives secondary buttons a small contrast change on hover. */
+.btn-secondary:hover,
+.btn-dark:hover {
+  background: #464646;
+  border-color: #5a5a5a;
+  color: var(--color-text-primary);
+}
+
+/* Recolors outline-primary actions to match the yellow brand system. */
+.btn-outline-primary {
+  border-color: var(--color-orange-primary);
+  color: var(--color-orange-primary);
+}
+
+/* Fills outline-primary actions with yellow on hover for clear action feedback. */
+.btn-outline-primary:hover {
+  background: var(--color-orange-primary);
+  border-color: var(--color-orange-primary);
+  color: var(--color-text-inverse);
+}
+
+/* Keeps light outline buttons legible in dark cards and modals. */
+.btn-outline-light,
+.btn-outline-secondary {
+  border-color: var(--color-border-light);
+  color: var(--color-text-primary);
+}
+
+/* Adds contrast to light outline buttons on hover. */
+.btn-outline-light:hover,
+.btn-outline-secondary:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-orange-primary);
+  color: var(--color-text-primary);
+}
+
+/* Creates a dark table surface that matches surrounding cards. */
+.table {
+  --bs-table-bg: var(--color-bg-secondary);
+  --bs-table-color: var(--color-text-primary);
+  --bs-table-border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+/* Styles table headers as compact, scannable labels. */
 .table thead th {
-  font-size: 0.8rem;
+  background: #242424;
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #64748b;
-  font-weight: 600;
 }
 
+/* Applies smooth hover feedback to transaction rows. */
+.table-hover tbody tr {
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+/* Uses a subtle yellow-tinted hover state for data rows. */
+.table-hover tbody tr:hover {
+  --bs-table-hover-bg: rgba(234, 179, 8, 0.08);
+  color: var(--color-text-primary);
+}
+
+/* Keeps responsive tables visually contained as card-like panels. */
+.table-responsive {
+  background: rgba(44, 44, 44, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 22px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+}
+
+/* Rounds badge pills while preserving Bootstrap's semantic colors. */
+.badge {
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-semibold);
+  padding: 0.45rem 0.7rem;
+}
+
+/* Converts alerts into dark-friendly notification panels. */
+.app-alert,
+.alert {
+  background: rgba(44, 44, 44, 0.96);
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  border-radius: 18px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+  color: var(--color-text-primary);
+}
+
+/* Keeps success notifications inside the same dark/yellow layout while preserving status meaning. */
+.alert-success {
+  border-color: rgba(39, 209, 142, 0.45);
+  color: #d9fff0;
+}
+
+/* Keeps warning notifications readable without changing the page theme. */
+.alert-warning {
+  border-color: rgba(255, 191, 102, 0.5);
+  color: #fff0d6;
+}
+
+/* Keeps error notifications visually consistent while still showing danger state. */
+.alert-danger {
+  border-color: rgba(255, 75, 75, 0.55);
+  color: #ffe0e0;
+}
+
+/* Creates a dark modal surface for exports and mobile account actions. */
+.modal-content,
+.offcanvas {
+  background: rgba(44, 44, 44, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 22px;
+  color: var(--color-text-primary);
+}
+
+/* Separates modal headers and footers with subtle dark borders. */
+.modal-header,
+.modal-footer,
+.offcanvas-header {
+  border-color: var(--color-border);
+}
+
+/* Styles progress tracks for dark budget widgets. */
+.progress {
+  background: #202020;
+  border: 1px solid var(--color-border);
+}
+
+/* Uses the expense red for progress bars while keeping text readable. */
+.progress-bar {
+  background-color: var(--color-danger);
+  color: #ffffff;
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Provides a max-width helper for chart-heavy dashboard panels. */
 .chart-wrap {
   max-width: 420px;
   margin: 0 auto;
 }
 
+/* Locks chart cards to a predictable height to prevent layout jumps. */
+.chart-card {
+  height: 380px;
+}
+
+/* Prevents chart canvases from overflowing their card containers. */
+.chart-card canvas {
+  max-height: 300px !important;
+}
+
+/* Centers compact budget charts inside their card. */
+.budget-chart-wrap {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+/* Styles budget summary cards as dense dark dashboard widgets. */
+.budget-summary-card {
+  background: rgba(44, 44, 44, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 22px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+}
+
+/* Defines compact labels inside budget summary widgets. */
+.budget-summary-title {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin-bottom: 8px;
+}
+
+/* Defines prominent totals inside budget summary widgets. */
+.budget-summary-value {
+  font-size: 1.4rem;
+  font-weight: var(--font-weight-bold);
+}
+
+/* Keeps the footer subdued and visually attached to the dark app frame. */
 .footer-muted {
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(6px);
+  background: #171717;
+  border-top: 1px solid var(--color-border);
 }
 
-/* Subtle page enter */
+/* Adds a gentle entrance animation for route changes. */
 .page-enter {
-  animation: pageFade 0.35s ease-out;
+  animation: pageFade 0.28s ease-out;
 }
 
+/* Defines the page entrance keyframes used by the shell. */
 @keyframes pageFade {
   from {
     opacity: 0;
     transform: translateY(6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* Focus visible for keyboard users */
+/* Provides visible keyboard focus rings across controls and navigation. */
 .btn:focus-visible,
 .form-control:focus-visible,
 .form-select:focus-visible,
-.nav-link:focus-visible {
-  outline: 2px solid var(--brand);
+.nav-link:focus-visible,
+.mobile-nav-item:focus-visible {
+  outline: 2px solid var(--color-orange-primary);
   outline-offset: 2px;
 }
 
-/* Bootstrap subtle backgrounds fallback (older BS) */
-.bg-success-subtle {
-  background-color: rgba(25, 135, 84, 0.12) !important;
-}
+/* Defines a dark yellow-tinted icon bubble used by auth screens. */
+.bg-primary-subtle,
+.bg-success-subtle,
+.bg-warning-subtle,
 .bg-danger-subtle {
-  background-color: rgba(220, 53, 69, 0.12) !important;
-}
-.bg-primary-subtle {
-  background-color: rgba(13, 110, 253, 0.12) !important;
-}
-.bg-warning-subtle {
-  background-color: rgba(255, 193, 7, 0.18) !important;
+  background-color: rgba(234, 179, 8, 0.14) !important;
 }
 
-/* =========================
-   DASHBOARD CHART FIXES
-========================= */
-
-.chart-card {
-  height: 380px;
+/* Converts Bootstrap primary backgrounds to yellow where used in templates. */
+.bg-primary {
+  background-color: var(--color-orange-primary) !important;
 }
 
-.chart-card canvas {
-  max-height: 300px !important;
+/* Positions the mobile app nav fixed to the viewport bottom. */
+.mobile-bottom-nav {
+  align-items: center;
+  background: rgba(31, 31, 31, 0.96);
+  border-top: 1px solid var(--color-border-light);
+  bottom: 0;
+  box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.45);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  left: 0;
+  padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom));
+  position: fixed;
+  right: 0;
+  z-index: var(--z-sticky);
 }
 
-.budget-chart-wrap {
-  max-width: 420px;
-  margin: 0 auto;
+/* Styles each mobile tab as an equally spaced icon button. */
+.mobile-nav-item {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  display: inline-flex;
+  flex-direction: column;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  gap: 0.2rem;
+  justify-content: center;
+  min-height: 58px;
+  padding: 0.35rem 0.25rem;
+  text-decoration: none;
+  transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
 }
 
-.budget-summary-card {
-  border: none;
-  border-radius: 16px;
-  padding: 20px;
-  background: white;
-  box-shadow: 0 0.25rem 1rem rgba(15, 23, 42, 0.06);
+/* Sizes the mobile navigation icons for quick thumb recognition. */
+.mobile-nav-item i {
+  font-size: 1.35rem;
+  line-height: 1;
 }
 
-.budget-summary-title {
-  font-size: 0.85rem;
-  color: #64748b;
-  margin-bottom: 8px;
+/* Uses yellow for active and hovered mobile tab states. */
+.mobile-nav-item.active,
+.mobile-nav-item:hover {
+  background: rgba(234, 179, 8, 0.13);
+  color: var(--color-orange-primary);
 }
 
-.budget-summary-value {
-  font-size: 1.4rem;
-  font-weight: 700;
+/* Emphasizes the central Add action as the primary mobile CTA. */
+.mobile-nav-item-primary i {
+  color: var(--color-orange-primary);
+  font-size: 1.55rem;
+}
+
+/* Sizes the mobile account offcanvas as a compact bottom sheet. */
+.mobile-account-panel {
+  border-radius: 18px 18px 0 0;
+  min-height: 230px;
+}
+
+/* Restores the desktop top navbar and reduces mobile-specific spacing on wider screens. */
+@media (min-width: 768px) {
+  .desktop-navbar {
+    display: flex;
+  }
+
+  .app-shell {
+    padding-bottom: var(--spacing-2xl);
+  }
+}
+
+/* Improves dense tables and page controls on narrow mobile screens. */
+@media (max-width: 575.98px) {
+  .app-shell {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+    padding-top: var(--spacing-lg);
+  }
+
+  .card {
+    border-radius: 18px;
+  }
+
+  .table {
+    font-size: var(--font-size-sm);
+  }
+
+  .btn {
+    min-height: 42px;
+  }
+}
+
+
+
+/* ==========================================================================
+   GLOBAL APP FRAMEWORK STYLES 
+   ========================================================================= */
+
+/* Main Theme Variables */
+:root {
+    --bg-dark-grey: #1a1a1a;
+    --card-dark: #1f1f1f;
+    --text-neon-yellow: #e2f105; /* Original Neon for Highlights */
+    --amber-yellow: #e0a800;      /* MATCHED LOGIN BUTTON COLOR */
+    --text-white: #ffffff;
+    --text-muted: #8aa4ad;
+}
+
+body {
+    background-color: var(--bg-dark-grey);
+    color: var(--text-white);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Common Neon Classes for consistency across app */
+.text-neon { color: var(--text-neon-yellow) !important; }
+.btn-neon {
+    background-color: var(--text-neon-yellow);
+    color: #121212;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
+    transition: background-color 0.3s;
+}
+.btn-neon:hover { background-color: #cddb04; }
+
+/* Password wrapper ka design */
+.password-field-wrapper {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    border: 1px solid #c0a062; /* Golden border */
+    border-radius: 6px;       /* Border corners */
+    overflow: hidden;         /* Yeh icon ko bahar nikalne se roke ga */
+    background-color: #1a1e24; /* Dark background */
+}
+
+/* Input field se purana border aur styles hata rahe hain */
+.password-field-wrapper .form-control {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: white;
+    flex: 1;
+}
+
+/* Icon button ko right side par perfect fit karna */
+.toggle-password-btn {
+    border: none;
+    background: #5c5c5c;      /* Grey background */
+    color: white;
+    padding: 0 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #c0a062; /* Golden line */
+}
+
+/* ==========================================================================
+   AI FINANCIAL CHATBOT PREMIUM WIDGET STYLES 
+   ========================================================================= */
+
+/* Floating Launcher Button */
+.chatbot-launcher-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--amber-yellow); /* UPDATED: Matched Login Button Yellow */
+    color: #121212;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px; /* Robot Icon Size */
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(224, 168, 0, 0.4);
+    z-index: 9999;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.chatbot-launcher-btn:hover {
+    transform: scale(1.1) rotate(5deg);
+    background-color: #c09100;
+}
+
+/* Chat Window Container */
+.chatbot-window-box {
+    position: fixed;
+    bottom: 95px;
+    right: 25px;
+    width: 370px;
+    height: 500px;
+    background: rgba(26, 26, 26, 0.96); /* Glassmorphism Dark */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(226, 241, 5, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9999;
+}
+
+/* Header UI */
+.chatbot-header {
+    background-color: var(--card-dark);
+    padding: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-avatar-status {
+    width: 10px;
+    height: 10px;
+    background-color: #00ff66; /* Online indicator */
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.text-muted-custom {
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+.close-chat-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 22px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+.close-chat-btn:hover { opacity: 1; }
+
+/* Messages Rendering Body */
+.chatbot-body-area {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chat-msg {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13.5px;
+    line-height: 1.5;
+}
+
+.ai-msg {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    border-left: 3px solid var(--amber-yellow); /* Matched Accent */
+}
+
+.user-msg {
+    background-color: var(--amber-yellow); /* UPDATED: Matched Accent Yellow */
+    color: #121212;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    font-weight: 500;
+}
+
+/* Text Box Footer Input Area */
+.chatbot-footer {
+    padding: 12px;
+    background-color: var(--card-dark);
+    display: flex;
+    gap: 8px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.chatbot-footer input {
+    flex: 1;
+    background-color: #2a2a2a;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #ffffff;
+    font-size: 13px;
+}
+
+.chatbot-footer input:focus {
+    outline: none;
+    border-color: var(--amber-yellow);
+}
+
+/* Microphone & Send Icons */
+#chatbot-send-btn, #chatbot-mic-btn {
+    color: #121212;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#chatbot-send-btn {
+    background-color: var(--amber-yellow);
+}
+#chatbot-send-btn:hover { background-color: #c09100; }
+
+#chatbot-mic-btn {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--amber-yellow);
+}
+#chatbot-mic-btn:hover { background-color: rgba(255, 255, 255, 0.2); }
+
+/* Class when voice recording is active */
+.mic-recording-active {
+    background-color: #dc3545 !important; /* Red indicator */
+    color: #ffffff !important;
+    animation: mic-pulse 1s infinite ease-in-out;
+}
+
+@keyframes mic-pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
 }

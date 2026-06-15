@@ -1,0 +1,22 @@
+<button class="chatbot-launcher-btn" onclick="toggleChatbotWindow()">
+    <i class="bi bi-robot"></i>
+</button>
+
+<div id="chatbot-container" class="chatbot-window-box d-none">
+    <div class="chatbot-header">
+        <div>
+            <strong>AI Assistant</strong> <span class="chat-avatar-status"></span>
+            <div class="text-muted-custom">Always Online</div>
+        </div>
+        <button class="close-chat-btn" onclick="toggleChatbotWindow()">&times;</button>
+    </div>
+    
+    <div id="chatbot-messages" class="chatbot-body-area">
+        </div>
+    
+    <div class="chatbot-footer">
+        <button id="chatbot-mic-btn" onclick="toggleVoice()"><i class="bi bi-mic"></i></button>
+        <input type="text" id="chatbot-input-field" onkeypress="handleChatKeypress(event)" placeholder="Ask about expenses...">
+        <button id="chatbot-send-btn" onclick="sendChatbotMessage()"><i class="bi bi-send-fill"></i></button>
+    </div>
+</div>

@@ -28,6 +28,12 @@ budget_bp = Blueprint(
 @budget_bp.route("/set", methods=["POST"])
 @login_required
 def set_budget():
+    """
+    Create or update the user's legacy total monthly budget.
+
+    This route remains for the server-rendered dashboard while the JSON budget
+    alert API handles category-specific limits for the React UI.
+    """
 
     amount = request.form.get("amount")
 
@@ -59,7 +65,8 @@ def set_budget():
 
     existing_budget = Budget.query.filter_by(
         user_id=current_user.id,
-        month=current_month
+        month=selected_month,
+        category=None,
     ).first()
 
     if existing_budget:
@@ -75,8 +82,9 @@ def set_budget():
 
         new_budget = Budget(
             user_id=current_user.id,
-            month=current_month,
-            amount=amount
+            month=selected_month,
+            amount=amount,
+            category=None,
         )
 
         db.session.add(new_budget)

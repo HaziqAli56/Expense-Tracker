@@ -1,0 +1,145 @@
+/**
+ * advancedFeatures.css
+ * Shared styling hooks for OCR, import/export, currency, and budget components.
+ */
+
+.panel {
+  border: 1px solid #d7dde8;
+  border-radius: 8px;
+  padding: 16px;
+  background: #ffffff;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dropZone {
+  display: grid;
+  min-height: 140px;
+  place-items: center;
+  border: 2px dashed #9aa9bd;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.dropZoneActive {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.formGridWide {
+  grid-column: 1 / -1;
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.48);
+}
+
+.modalPanel {
+  width: min(560px, 100%);
+  border-radius: 8px;
+  padding: 16px;
+  background: #ffffff;
+}
+
+.status {
+  color: #166534;
+}
+
+.forecastSkeleton {
+  display: grid;
+  gap: 14px;
+}
+
+.skeletonLine,
+.skeletonChart {
+  overflow: hidden;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #eef2f7 25%, #dbe3ef 37%, #eef2f7 63%);
+  background-size: 400% 100%;
+  animation: skeletonPulse 1.2s ease-in-out infinite;
+}
+
+.skeletonLine {
+  width: min(260px, 80%);
+  height: 18px;
+}
+
+.skeletonChart {
+  width: 100%;
+  height: 280px;
+}
+
+@keyframes skeletonPulse {
+  0% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+.error,
+.errorList {
+  color: #b91c1c;
+}
+
+.budgetList {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.budgetRowHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.progressTrack {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+
+.progressFill {
+  height: 100%;
+  transition: width 180ms ease;
+}
+
+.budgetSuccess {
+  background: #16a34a;
+}
+
+.budgetWarning {
+  background: #f59e0b;
+}
+
+.budgetDanger {
+  background: #dc2626;
+}

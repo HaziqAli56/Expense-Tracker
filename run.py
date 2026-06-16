@@ -1,21 +1,15 @@
-"""
-Project entry point (Flask development server).
-
-Ye file project root par hai taake CMD mein seedha chal sake:
-    python run.py
-
-Asal application factory `expense_tracker` package ke andar hai.
-"""
-
-from expense_tracker import create_app
+from expense_tracker import create_app, db
 
 app = create_app()
 
+# Yeh code Render par chalega kyunki Render run.py ko hit karta hai
+with app.app_context():
+    try:
+        db.drop_all()  # Purani tables delete
+        db.create_all() # Nayi tables create (sub_category ke sath)
+        print("Database successfully reset from run.py!")
+    except Exception as e:
+        print(f"Error resetting database: {e}")
+
 if __name__ == "__main__":
-    # debug=True sirf development ke liye; production mein WSGI server use hota hai
-    import os
-    app.run(
-    host="0.0.0.0",
-    port=int(os.environ.get("PORT", 5000)),
-    debug=True
-    )
+    app.run(host='0.0.0.0', port=5000, debug=True)

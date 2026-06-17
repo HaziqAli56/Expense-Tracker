@@ -37,8 +37,12 @@ class Config:
         "fallback-secret-key",
     )
 
-    # Code (Sirf aur sirf PostgreSQL dhoondega)
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+    # Database URL configuration with PostgreSQL fix
+    _db_url = os.environ.get("DATABASE_URL")
+    if _db_url and _db_url.startswith("postgres://"):
+        _db_url = _db_url.replace("postgres://", "postgresql://", 1)
+    
+    SQLALCHEMY_DATABASE_URI = _db_url
 
     # Local-only escape hatch for legacy development databases without migrations.
     AUTO_CREATE_TABLES = os.environ.get("AUTO_CREATE_TABLES", "false").lower() == "true"

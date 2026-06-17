@@ -799,3 +799,12 @@ body {
     50% { opacity: 0.5; }
     100% { opacity: 1; }
 }
+
+/* Mobile view ke liye fix (Tablet aur Mobile dono ke liye) */
+@media (max-width: 768px) {
+    .chatbot-launcher-btn { /* Yahan apna sahi class/ID naam likhein */
+        bottom: 80px !important; /* Navbar ki height se thoda upar adjust karein */
+        right: 15px !important;  /* Thoda side mein shift karne ke liye */
+        transform: scale(0.9);   /* Agar icon bada lag raha hai toh thoda chota kar dein */
+    }
+}

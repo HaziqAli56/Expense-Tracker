@@ -1,17 +1,37 @@
 // Greeting with Dynamic Name
 document.addEventListener("DOMContentLoaded", function() {
-    const userName = (typeof CURRENT_USER_NAME !== 'undefined') ? CURRENT_USER_NAME : "Sir/Madam";
+    const chatMessages = document.getElementById('chatbot-messages');
     
-    setTimeout(() => {
-        const chatMessages = document.getElementById('chatbot-messages');
-        if (chatMessages && chatMessages.innerHTML.trim() === "") {
-            chatMessages.innerHTML += `
-                <div class='chat-msg ai-msg' style="margin: 10px; padding: 10px; background: #2a2a2a; color: white; border-radius: 10px;">
-                    <b>AI:</b> Hello! Welcome to your Financial Assistant. How may I help you today, ${userName}?
-                </div>`;
-        }
-    }, 1500);
+    // 1. Check if there is saved history in SessionStorage
+    const savedHistory = sessionStorage.getItem('chat_history');
+    
+    if (savedHistory) {
+        // If history exists, load it
+        chatMessages.innerHTML = savedHistory;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    } else {
+        // Only if NO history, show the greeting
+        const userName = (typeof CURRENT_USER_NAME !== 'undefined') ? CURRENT_USER_NAME : "Sir/Madam";
+        
+        setTimeout(() => {
+            if (chatMessages && chatMessages.innerHTML.trim() === "") {
+                chatMessages.innerHTML += `
+                    <div class='chat-msg ai-msg' style="margin: 10px; padding: 10px; background: #2a2a2a; color: white; border-radius: 10px;">
+                        <b>AI:</b> Hello! Welcome to your Financial Assistant. How may I help you today, ${userName}?
+                    </div>`;
+                saveChatHistory(); // Save the greeting to history
+            }
+        }, 1500);
+    }
 });
+
+// Helper function to save current chat state
+function saveChatHistory() {
+    const chatMessages = document.getElementById('chatbot-messages');
+    if (chatMessages) {
+        sessionStorage.setItem('chat_history', chatMessages.innerHTML);
+    }
+}
 
 // Toggle Chatbot Window
 function toggleChatbotWindow() {
@@ -44,8 +64,10 @@ async function sendChatbotMessage() {
     
     if (!messageText) return;
 
+    // Add user message to DOM
     chatMessages.innerHTML += `<div class='chat-msg user-msg' style="margin: 10px; padding: 10px; background: #ffc107; border-radius: 10px; text-align: right;"><b>You:</b> ${messageText}</div>`;
     inputField.value = '';
+    saveChatHistory(); // Save state
 
     try {
         const response = await fetch(window.location.origin + '/api/chatbot/message', {
@@ -54,8 +76,12 @@ async function sendChatbotMessage() {
             body: JSON.stringify({ message: messageText }),
         });
         const data = await response.json();
+        
+        // Add AI message to DOM
         chatMessages.innerHTML += `<div class='chat-msg ai-msg' style="margin: 10px; padding: 10px; background: #2a2a2a; color: white; border-radius: 10px;"><b>AI:</b> ${data.response}</div>`;
         chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        saveChatHistory(); // Save updated state
     } catch (err) {
         console.error(err);
     }

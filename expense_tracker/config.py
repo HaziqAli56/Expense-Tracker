@@ -37,11 +37,8 @@ class Config:
         "fallback-secret-key",
     )
 
-    # DATABASE_URL should point to PostgreSQL in production.
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-    "DATABASE_URL",
-    "sqlite:///" + os.path.join(INSTANCE_DIR, "expenses_v2.db"),  # <--- Sirf ye naam change kiya
-   )
+    # Code (Sirf aur sirf PostgreSQL dhoondega)
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
 
     # Local-only escape hatch for legacy development databases without migrations.
     AUTO_CREATE_TABLES = os.environ.get("AUTO_CREATE_TABLES", "false").lower() == "true"

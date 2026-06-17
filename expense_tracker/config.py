@@ -55,9 +55,9 @@ class Config:
     REMEMBER_COOKIE_HTTPONLY = True
 
     # Flask-Mail SMTP settings are read from environment variables for safety.
-    MAIL_SERVER = os.environ.get("MAIL_SERVER", "localhost")
-    MAIL_PORT = int(os.environ.get("MAIL_PORT", "25"))
-    MAIL_USE_TLS = os.environ.get("MAIL_USE_TLS", "false").lower() == "true"
+    MAIL_SERVER = os.environ.get("MAIL_SERVER")
+    MAIL_PORT = int(os.environ.get("MAIL_PORT", "587"))
+    MAIL_USE_TLS = os.environ.get("MAIL_USE_TLS", "true").lower() == "true"
     MAIL_USE_SSL = os.environ.get("MAIL_USE_SSL", "false").lower() == "true"
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
@@ -72,7 +72,7 @@ class Config:
     # Receipt scanner accepts common browser/mobile image formats only.
     ALLOWED_RECEIPT_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
     ALLOWED_RECEIPT_MIMETYPES = {"image/png", "image/jpeg", "image/webp"}
-    TESSERACT_CMD = os.environ.get("TESSERACT_CMD")
+    TESSERACT_CMD = os.environ.get("TESSERACT_CMD", "/usr/bin/tesseract")
 
     # Bulk imports are intentionally capped so one upload cannot overwhelm the app.
     MAX_IMPORT_ROWS = int(os.environ.get("MAX_IMPORT_ROWS", "5000"))
